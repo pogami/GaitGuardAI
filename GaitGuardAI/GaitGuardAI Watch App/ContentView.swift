@@ -202,7 +202,7 @@ struct ContentView: View {
 
     private var settingsSheet: some View {
         ScrollView {
-            VStack(spacing: 12) {
+            VStack(spacing: 10) {
                 HStack {
                     Text("Settings")
                         .font(.headline)
@@ -210,62 +210,61 @@ struct ContentView: View {
                     Button("Done") { showingSettings = false }
                         .font(.subheadline.bold())
                 }
+                .padding(.bottom, 4)
                 
-                VStack(alignment: .leading, spacing: 8) {
+                // Sensitivity
+                VStack(spacing: 6) {
                     HStack {
                         Text("Sensitivity")
+                            .font(.subheadline)
                         Spacer()
                         Text("\(Int(engine.settings.sensitivity * 100))%")
-                            .foregroundStyle(.secondary)
+                            .font(.subheadline.bold())
                     }
                     Slider(value: $engine.settings.sensitivity, in: 0.0...1.0, step: 0.01)
-                    
-                    Text("Higher sensitivity triggers cues sooner.")
-                        .font(.system(size: 10))
-                        .foregroundStyle(.secondary)
                 }
-                .padding(8)
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                .padding(10)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
                 
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Testing")
-                        .font(.subheadline.bold())
+                // Testing buttons in a grid
+                VStack(spacing: 6) {
+                    Button("Test Haptic") {
+                        engine.testHaptic()
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.blue)
                     
-                    VStack(spacing: 8) {
-                        Button("Test Haptic") {
-                            engine.testHaptic()
+                    HStack(spacing: 6) {
+                        Button("Sim Start") {
+                            engine.simulateAssist(kind: .start)
                         }
                         .buttonStyle(.bordered)
-                        .tint(.blue)
+                        .tint(.orange)
                         
-                        HStack(spacing: 8) {
-                            Button("Sim Start") {
-                                engine.simulateAssist(kind: .start)
-                            }
-                            .buttonStyle(.bordered)
-                            .tint(.orange)
-                            
-                            Button("Sim Turn") {
-                                engine.simulateAssist(kind: .turn)
-                            }
-                            .buttonStyle(.bordered)
-                            .tint(.purple)
+                        Button("Sim Turn") {
+                            engine.simulateAssist(kind: .turn)
                         }
-                    }
-                    
-                    HStack {
-                        Text("State")
-                            .font(.caption2)
-                        Spacer()
-                        Text(engine.state.rawValue)
-                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .buttonStyle(.bordered)
+                        .tint(.purple)
                     }
                 }
-                .padding(8)
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                .padding(10)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
+                
+                // State indicator (compact)
+                HStack {
+                    Text("State:")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text(engine.state.rawValue)
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.primary)
+                    Spacer()
+                }
+                .padding(.horizontal, 4)
             }
-            .padding(.horizontal, 8)
-            .padding(.bottom, 10)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
         }
     }
 
