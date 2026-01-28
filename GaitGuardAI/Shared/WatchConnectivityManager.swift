@@ -38,6 +38,10 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         session?.activate()
         
         loadEvents()
+#if os(iOS)
+        // If the watch already sent application context before the iPhone launched, hydrate immediately.
+        hydrateFromApplicationContext()
+#endif
     }
     
     // MARK: - Watch → iPhone (send from watch)
@@ -52,7 +56,7 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         if session.isReachable {
             session.sendMessage(["assistEvent": data], replyHandler: nil)
         } else {
-            try? session.updateApplicationContext(["assistEvent": data])
+            updateApplicationContextMerging(["assistEvent": data])
         }
     }
 
@@ -72,7 +76,16 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
             session.sendMessage(["guardState": state], replyHandler: nil)
         }
         // Reliable fallback: update application context (delivered even if the other app is backgrounded).
-        try? session.updateApplicationContext(["guardState": state])
+        updateApplicationContextMerging(["guardState": state])
+    }
+
+    private func updateApplicationContextMerging(_ updates: [String: Any]) {
+        guard let session = session else { return }
+        // IMPORTANT: updateApplicationContext replaces the entire dictionary.
+        // Merge with existing context so "guardState" and "assistEvent" don't overwrite each other.
+        var merged = session.receivedApplicationContext
+        for (k, v) in updates { merged[k] = v }
+        try? session.updateApplicationContext(merged)
     }
 
     private func flushPendingStateIfNeeded() {
@@ -84,6 +97,13 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
     }
 
 #if os(iOS)
+    private func hydrateFromApplicationContext() {
+        guard let session = session else { return }
+        if let state = session.receivedApplicationContext["guardState"] as? String {
+            remoteState = state
+        }
+    }
+
     /// Ask the watch for its current guard state (useful if the iPhone launched after the watch started).
     func requestCurrentStateFromWatch() {
         guard let session = session else { return }
@@ -200,6 +220,9 @@ extension WatchConnectivityManager: WCSessionDelegate {
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         DispatchQueue.main.async {
             self.flushPendingStateIfNeeded()
+#if os(iOS)
+            self.hydrateFromApplicationContext()
+#endif
         }
     }
 
