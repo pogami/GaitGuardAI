@@ -48,7 +48,7 @@ Important: thresholds are intentionally simple, and are designed to be **tunable
 
 ## Running on Apple Watch
 
-1. Open `GaitGuardAI/GaitGuardAI.xcodeproj` in Xcode.
+1. Open `GaitGuard/GaitGuardAI.xcodeproj` in Xcode.
 2. Select the scheme: **`GaitGuard Watch App`**
 3. Select a run destination:
    - a Watch Simulator, or
@@ -69,9 +69,10 @@ Important: thresholds are intentionally simple, and are designed to be **tunable
 
 ## Project structure
 
-- `GaitGuardAI/GaitGuard Watch App/ContentView.swift`: watch UI
-- `GaitGuardAI/GaitGuard Watch App/MotionDetector.swift`: motion ingest, state machine, cueing + stats
-- `GaitGuardAI/SessionManager.swift`: `WKExtendedRuntimeSession` management
+- `GaitGuard/GaitGuard Watch App/ContentView.swift`: watch UI
+- `GaitGuard/GaitGuard Watch App/MotionDetector.swift`: motion ingest, state machine, cueing + stats
+- `GaitGuard/SessionManager.swift`: `WKExtendedRuntimeSession` management
+- `GaitGuard/Shared/WatchConnectivityManager.swift`: Watch ↔ iPhone communication
 
 ## Tuning
 

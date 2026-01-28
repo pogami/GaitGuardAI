@@ -1,8 +1,8 @@
-// GaitGuardAIApp.swift (REMOVE any duplicate SessionManager class from this file)
+// GaitGuardApp.swift (REMOVE any duplicate SessionManager class from this file)
 import SwiftUI
 
 @main
-struct GaitGuardAIApp: App {
+struct GaitGuardApp: App {
     @StateObject private var sessionManager = SessionManager()
 
     var body: some Scene {

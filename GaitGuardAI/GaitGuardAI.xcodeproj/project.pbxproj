@@ -398,7 +398,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "GaitGuardAI-Watch-App-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = GaitGuardAI;
+				INFOPLIST_KEY_CFBundleDisplayName = GaitGuard;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We use your heart rate to monitor your activity during gait guarding.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We record your activity to help track your walking progress.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "GaitGuard uses motion sensors to detect freezing episodes and help you walk.";
@@ -436,7 +436,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "GaitGuardAI-Watch-App-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = GaitGuardAI;
+				INFOPLIST_KEY_CFBundleDisplayName = GaitGuard;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We use your heart rate to monitor your activity during gait guarding.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We record your activity to help track your walking progress.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "GaitGuard uses motion sensors to detect freezing episodes and help you walk.";
@@ -469,7 +469,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2STYFMJ8WN;
-				INFOPLIST_KEY_CFBundleDisplayName = GaitGuardAI;
+				INFOPLIST_KEY_CFBundleDisplayName = GaitGuard;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adam.GaitGuardAI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -486,7 +486,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2STYFMJ8WN;
-				INFOPLIST_KEY_CFBundleDisplayName = GaitGuardAI;
+				INFOPLIST_KEY_CFBundleDisplayName = GaitGuard;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adam.GaitGuardAI;
 				PRODUCT_NAME = "$(TARGET_NAME)";

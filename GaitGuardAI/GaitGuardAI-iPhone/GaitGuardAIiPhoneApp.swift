@@ -1,10 +1,10 @@
-// GaitGuardAIiPhoneApp.swift
+// GaitGuardiPhoneApp.swift
 import SwiftUI
 
 @main
-struct GaitGuardAIiPhoneApp: App {
+struct GaitGuardiPhoneApp: App {
     @StateObject private var connectivity = WatchConnectivityManager.shared
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()
