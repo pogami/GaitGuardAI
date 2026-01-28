@@ -41,32 +41,32 @@ struct ContentView: View {
     }
 
     private func mainLayout(padding: CGFloat, iconSize: CGFloat, showSubtitle: Bool) -> some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 0) {
             header(iconSize: iconSize)
+            
+            Spacer(minLength: 2)
             
             // Status indicator with icon
             VStack(spacing: 2) {
                 Image(systemName: statusIcon.name)
-                    .font(.system(size: 28, weight: .medium))
+                    .font(.system(size: 24, weight: .medium))
                     .foregroundStyle(statusIcon.color)
                     .symbolEffect(.pulse, isActive: isActive && engine.isMonitoring)
                 
                 Text(statusTitle)
-                    .font(.system(.subheadline, design: .rounded).bold())
+                    .font(.system(.footnote, design: .rounded).bold())
                     .multilineTextAlignment(.center)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.8)
             }
             
-            Spacer(minLength: 0)
+            Spacer(minLength: 4)
             
             statsCompact
             
-            Spacer(minLength: 0)
+            Spacer(minLength: 4)
             
             controls
         }
-        .padding(.top, 0)
         .padding(.horizontal, padding)
         .padding(.bottom, 2)
     }
@@ -90,7 +90,7 @@ struct ContentView: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(.top, 18) // Move below the system clock
+        .padding(.top, 14) // Slightly less top padding to pull everything up
     }
 
     private var stats: some View {
@@ -117,32 +117,31 @@ struct ContentView: View {
     }
 
     private var statsCompact: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 4) {
             // Assists count
-            VStack(spacing: 1) {
+            VStack(spacing: 0) {
                 Text("\(engine.assistsToday)")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
                 Text("ASSISTS")
                     .font(.system(size: 7, weight: .black))
                     .foregroundStyle(.white.opacity(0.6))
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 40)
-            .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
+            .frame(height: 34)
+            .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 6))
             
             // Last assist time
-            VStack(spacing: 1) {
+            VStack(spacing: 0) {
                 Text(engine.lastAssistText)
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .font(.system(size: 10, weight: .bold, design: .rounded))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.5)
                 Text("LAST")
                     .font(.system(size: 7, weight: .black))
                     .foregroundStyle(.white.opacity(0.6))
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 40)
-            .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
+            .frame(height: 34)
+            .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 6))
         }
     }
 
@@ -151,9 +150,9 @@ struct ContentView: View {
             isActive.toggle()
         } label: {
             Text(isActive ? "STOP" : "START")
-                .font(.system(.headline, design: .rounded).bold())
+                .font(.system(.body, design: .rounded).bold())
                 .frame(maxWidth: .infinity)
-                .frame(height: 38)
+                .frame(height: 34)
         }
         .buttonStyle(.borderedProminent)
         .tint(isActive ? .red : .white)
