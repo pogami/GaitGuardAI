@@ -115,6 +115,16 @@ struct ContentView: View {
                 }
                 .buttonStyle(.bordered)
             }
+
+            // Debug line: helps verify WCSession is actually connected/reachable.
+            VStack(alignment: .leading, spacing: 2) {
+                Text("WCSession: \(connectivity.wcActivationStateLabel) • reachable: \(connectivity.wcIsReachable ? "yes" : "no")")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                Text("paired: \(connectivity.wcIsPaired ? "yes" : "no") • watch app installed: \(connectivity.wcIsWatchAppInstalled ? "yes" : "no")")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding()
         .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))

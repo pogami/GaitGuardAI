@@ -25,6 +25,25 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
 #if os(iOS)
     private var demoTimer: Timer?
 #endif
+
+    // MARK: - Debug helpers
+
+    var wcActivationStateLabel: String {
+        guard let session else { return "unsupported" }
+        switch session.activationState {
+        case .notActivated: return "notActivated"
+        case .inactive: return "inactive"
+        case .activated: return "activated"
+        @unknown default: return "unknown"
+        }
+    }
+
+    var wcIsReachable: Bool { session?.isReachable ?? false }
+
+#if os(iOS)
+    var wcIsPaired: Bool { session?.isPaired ?? false }
+    var wcIsWatchAppInstalled: Bool { session?.isWatchAppInstalled ?? false }
+#endif
     
     override init() {
         if WCSession.isSupported() {
@@ -54,7 +73,10 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         guard let data = try? JSONEncoder().encode(event) else { return }
         
         if session.isReachable {
-            session.sendMessage(["assistEvent": data], replyHandler: nil)
+            session.sendMessage(["assistEvent": data], replyHandler: nil) { [weak self] _ in
+                // If instant delivery fails, fall back to app context.
+                self?.updateApplicationContextMerging(["assistEvent": data])
+            }
         } else {
             updateApplicationContextMerging(["assistEvent": data])
         }
@@ -73,7 +95,10 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         
         // Best-effort: send immediately if reachable.
         if session.isReachable {
-            session.sendMessage(["guardState": state], replyHandler: nil)
+            session.sendMessage(["guardState": state], replyHandler: nil) { [weak self] _ in
+                // If instant delivery fails, fall back to app context.
+                self?.updateApplicationContextMerging(["guardState": state])
+            }
         }
         // Reliable fallback: update application context (delivered even if the other app is backgrounded).
         updateApplicationContextMerging(["guardState": state])
