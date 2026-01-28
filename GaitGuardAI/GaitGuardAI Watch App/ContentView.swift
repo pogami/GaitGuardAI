@@ -41,76 +41,56 @@ struct ContentView: View {
     }
 
     private func mainLayout(padding: CGFloat, iconSize: CGFloat, showSubtitle: Bool) -> some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 4) {
             header(iconSize: iconSize)
             
-            Spacer(minLength: 2)
-            
             // Status indicator with icon
-            VStack(spacing: 4) {
+            VStack(spacing: 2) {
                 Image(systemName: statusIcon.name)
-                    .font(.system(size: 32, weight: .medium))
+                    .font(.system(size: 28, weight: .medium))
                     .foregroundStyle(statusIcon.color)
                     .symbolEffect(.pulse, isActive: isActive && engine.isMonitoring)
                 
                 Text(statusTitle)
-                    .font(.system(.headline, design: .rounded).bold())
+                    .font(.system(.subheadline, design: .rounded).bold())
                     .multilineTextAlignment(.center)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                
-                if showSubtitle {
-                    Text(statusSubtitle)
-                        .font(.system(size: 9))
-                        .foregroundStyle(.white.opacity(0.8))
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.8)
-                        .padding(.horizontal, 4)
-                }
-            }
-            
-            Spacer(minLength: 2)
-            
-            statsCompact
-            
-            Spacer(minLength: 2)
-            
-            controls
-        }
-        .padding(.top, 2)
-        .padding(.horizontal, padding)
-        .padding(.bottom, 4)
-    }
-
-    private func header(iconSize: CGFloat) -> some View {
-        HStack(alignment: .center, spacing: 8) {
-            VStack(alignment: .leading, spacing: 1) {
-                Text("GaitGuard")
-                    .font(.system(.body, design: .rounded).bold())
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                Text(isActive ? "Right wrist" : "Wear right wrist")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.secondary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
             
             Spacer(minLength: 0)
             
+            statsCompact
+            
+            Spacer(minLength: 0)
+            
+            controls
+        }
+        .padding(.top, 0)
+        .padding(.horizontal, padding)
+        .padding(.bottom, 2)
+    }
+
+    private func header(iconSize: CGFloat) -> some View {
+        HStack(alignment: .center) {
+            Text("GaitGuard")
+                .font(.system(.body, design: .rounded).bold())
+                .lineLimit(1)
+            
+            Spacer()
+            
             Button {
                 showingSettings = true
             } label: {
                 Image(systemName: "gearshape.fill")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .frame(width: 28, height: 28)
-                    .background(.thinMaterial, in: Circle())
+                    .font(.system(size: 14))
+                    .foregroundStyle(.white)
+                    .frame(width: 24, height: 24)
+                    .background(.white.opacity(0.2), in: Circle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Settings")
         }
+        .padding(.top, 18) // Move below the system clock
     }
 
     private var stats: some View {
@@ -139,65 +119,45 @@ struct ContentView: View {
     private var statsCompact: some View {
         HStack(spacing: 6) {
             // Assists count
-            VStack(spacing: 2) {
+            VStack(spacing: 1) {
                 Text("\(engine.assistsToday)")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                
-                Text("Assists")
-                    .font(.system(size: 8, weight: .bold))
-                    .foregroundStyle(.white.opacity(0.8))
-                    .textCase(.uppercase)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                Text("ASSISTS")
+                    .font(.system(size: 7, weight: .black))
+                    .foregroundStyle(.white.opacity(0.6))
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-            .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 10))
+            .frame(height: 40)
+            .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
             
             // Last assist time
-            VStack(spacing: 2) {
+            VStack(spacing: 1) {
                 Text(engine.lastAssistText)
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
-                    .foregroundStyle(.white)
-                
-                Text("Last")
-                    .font(.system(size: 8, weight: .bold))
-                    .foregroundStyle(.white.opacity(0.8))
-                    .textCase(.uppercase)
+                Text("LAST")
+                    .font(.system(size: 7, weight: .black))
+                    .foregroundStyle(.white.opacity(0.6))
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-            .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 10))
+            .frame(height: 40)
+            .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
         }
     }
 
     private var controls: some View {
-        VStack(spacing: 6) {
-            Button {
-                isActive.toggle()
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: isActive ? "stop.fill" : "play.fill")
-                        .font(.system(size: 14, weight: .bold))
-                    Text(isActive ? "STOP" : "START")
-                        .font(.system(.headline, design: .rounded).bold())
-                }
+        Button {
+            isActive.toggle()
+        } label: {
+            Text(isActive ? "STOP" : "START")
+                .font(.system(.headline, design: .rounded).bold())
                 .frame(maxWidth: .infinity)
-                .frame(height: 42)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(isActive ? .red : .white)
-            .foregroundStyle(isActive ? .white : .blue)
-            
-            if isActive {
-                Text("Auto start + turn assist")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
+                .frame(height: 38)
         }
+        .buttonStyle(.borderedProminent)
+        .tint(isActive ? .red : .white)
+        .foregroundStyle(isActive ? .white : .blue)
     }
 
     private var settingsSheet: some View {
