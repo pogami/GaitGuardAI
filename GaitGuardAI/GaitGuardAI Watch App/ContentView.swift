@@ -41,15 +41,23 @@ struct ContentView: View {
     }
 
     private func mainLayout(padding: CGFloat, iconSize: CGFloat, showSubtitle: Bool) -> some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 12) {
             header(iconSize: iconSize)
             
-            VStack(spacing: 2) {
+            Spacer(minLength: 4)
+            
+            // Status indicator with icon
+            VStack(spacing: 6) {
+                Image(systemName: statusIcon.name)
+                    .font(.system(size: 36, weight: .medium))
+                    .foregroundStyle(statusIcon.color)
+                    .symbolEffect(.pulse, isActive: isActive && engine.isMonitoring)
+                
                 Text(statusTitle)
-                    .font(.system(.headline, design: .rounded).bold())
+                    .font(.system(.title3, design: .rounded).bold())
                     .multilineTextAlignment(.center)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.78)
+                    .minimumScaleFactor(0.7)
                 
                 if showSubtitle {
                     Text(statusSubtitle)
@@ -58,8 +66,11 @@ struct ContentView: View {
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                         .minimumScaleFactor(0.75)
+                        .padding(.horizontal, 4)
                 }
             }
+            
+            Spacer(minLength: 4)
             
             statsCompact
             
@@ -67,30 +78,23 @@ struct ContentView: View {
             
             controls
         }
-        .padding(.top, 6)
+        .padding(.top, 4)
         .padding(.horizontal, padding)
-        .padding(.bottom, 8)
+        .padding(.bottom, 6)
     }
 
     private func header(iconSize: CGFloat) -> some View {
-        let icon = statusIcon
-        return HStack(alignment: .center, spacing: 10) {
-            Image(systemName: icon.name)
-                .font(.system(size: iconSize, weight: .semibold))
-                .foregroundStyle(icon.color)
-                .symbolEffect(.pulse, isActive: isActive && engine.isMonitoring)
-                .frame(width: max(30, iconSize + 2))
-            
-            VStack(alignment: .leading, spacing: 2) {
+        HStack(alignment: .center, spacing: 8) {
+            VStack(alignment: .leading, spacing: 1) {
                 Text("GaitGuard")
-                    .font(.system(.subheadline, design: .rounded).bold())
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.65)
-                Text(isActive ? "Right wrist" : "Wear right wrist")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .font(.system(.body, design: .rounded).bold())
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
+                Text(isActive ? "Right wrist" : "Wear right wrist")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
             
             Spacer(minLength: 0)
@@ -99,8 +103,9 @@ struct ContentView: View {
                 showingSettings = true
             } label: {
                 Image(systemName: "gearshape.fill")
-                    .font(.system(size: 13, weight: .semibold))
-                    .frame(width: 26, height: 26)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .frame(width: 28, height: 28)
                     .background(.thinMaterial, in: Circle())
             }
             .buttonStyle(.plain)
@@ -132,46 +137,62 @@ struct ContentView: View {
     }
 
     private var statsCompact: some View {
-        HStack(spacing: 10) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Assists")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+        HStack(spacing: 8) {
+            // Assists count
+            VStack(spacing: 3) {
                 Text("\(engine.assistsToday)")
-                    .font(.system(.headline, design: .rounded).bold())
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Last")
-                    .font(.caption2)
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundStyle(.primary)
+                
+                Text("Assists")
+                    .font(.system(size: 10, weight: .medium))
                     .foregroundStyle(.secondary)
-                Text(engine.lastAssistText)
-                    .font(.system(.headline, design: .rounded).bold())
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                    .textCase(.uppercase)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            
+            // Last assist time
+            VStack(spacing: 3) {
+                Text(engine.lastAssistText)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .foregroundStyle(.primary)
+                
+                Text("Last")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .textCase(.uppercase)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
-        .padding(10)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     private var controls: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             Button {
                 isActive.toggle()
             } label: {
-                Text(isActive ? "STOP" : "START")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
+                HStack(spacing: 6) {
+                    Image(systemName: isActive ? "stop.fill" : "play.fill")
+                        .font(.system(size: 14, weight: .bold))
+                    Text(isActive ? "STOP" : "START")
+                        .font(.system(.headline, design: .rounded).bold())
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 42)
             }
             .buttonStyle(.borderedProminent)
-            .tint(isActive ? .red : .blue)
+            .tint(isActive ? .red : .white)
+            .foregroundStyle(isActive ? .white : .blue)
             
             if isActive {
-                Text("Automatic start + turn assist")
-                    .font(.caption2)
+                Text("Auto start + turn assist")
+                    .font(.system(size: 10))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
@@ -249,14 +270,40 @@ struct ContentView: View {
     }
 
     private var backgroundStyle: AnyShapeStyle {
-        if !isActive { return AnyShapeStyle(Color.blue.gradient) }
+        if !isActive { 
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [Color(red: 0.2, green: 0.5, blue: 0.9), Color(red: 0.1, green: 0.3, blue: 0.7)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+        }
         switch engine.state {
         case .cueingStartAssist, .cueingTurnAssist:
-            return AnyShapeStyle(Color.orange.gradient)
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [Color.orange, Color(red: 0.9, green: 0.4, blue: 0.0)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
         case .cooldown:
-            return AnyShapeStyle(Color.purple.gradient)
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [Color.purple, Color(red: 0.5, green: 0.2, blue: 0.7)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
         default:
-            return AnyShapeStyle(Color.green.gradient)
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [Color(red: 0.2, green: 0.7, blue: 0.4), Color(red: 0.1, green: 0.5, blue: 0.3)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
         }
     }
 
