@@ -180,69 +180,72 @@ struct ContentView: View {
     }
 
     private var settingsSheet: some View {
-        VStack(spacing: 12) {
-            HStack {
-                Text("Settings")
-                    .font(.headline)
-                Spacer()
-                Button("Done") { showingSettings = false }
-                    .font(.subheadline.bold())
-            }
-            
-            VStack(alignment: .leading, spacing: 8) {
+        ScrollView {
+            VStack(spacing: 12) {
                 HStack {
-                    Text("Sensitivity")
+                    Text("Settings")
+                        .font(.headline)
                     Spacer()
-                    Text("\(Int(engine.settings.sensitivity * 100))%")
-                        .foregroundStyle(.secondary)
+                    Button("Done") { showingSettings = false }
+                        .font(.subheadline.bold())
                 }
-                Slider(value: $engine.settings.sensitivity, in: 0.0...1.0, step: 0.01)
                 
-                Text("Higher sensitivity cues sooner (more false alarms).")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(10)
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Testing")
-                    .font(.subheadline.bold())
-                
-                Text("Note: Watch Simulator may not vibrate. Test on a real watch.")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                
-                HStack(spacing: 8) {
-                    Button("Test Haptic") {
-                        engine.testHaptic()
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Sensitivity")
+                        Spacer()
+                        Text("\(Int(engine.settings.sensitivity * 100))%")
+                            .foregroundStyle(.secondary)
                     }
-                    .buttonStyle(.bordered)
+                    Slider(value: $engine.settings.sensitivity, in: 0.0...1.0, step: 0.01)
                     
-                    Button("Sim Start") {
-                        engine.simulateAssist(kind: .start)
-                    }
-                    .buttonStyle(.bordered)
-                }
-                
-                Button("Sim Turn") {
-                    engine.simulateAssist(kind: .turn)
-                }
-                .buttonStyle(.bordered)
-                
-                HStack {
-                    Text("State")
-                        .font(.caption2)
+                    Text("Higher sensitivity triggers cues sooner.")
+                        .font(.system(size: 10))
                         .foregroundStyle(.secondary)
-                    Spacer()
-                    Text(engine.state.rawValue)
-                        .font(.caption2.bold())
                 }
+                .padding(8)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Testing")
+                        .font(.subheadline.bold())
+                    
+                    VStack(spacing: 8) {
+                        Button("Test Haptic") {
+                            engine.testHaptic()
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.blue)
+                        
+                        HStack(spacing: 8) {
+                            Button("Sim Start") {
+                                engine.simulateAssist(kind: .start)
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.orange)
+                            
+                            Button("Sim Turn") {
+                                engine.simulateAssist(kind: .turn)
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.purple)
+                        }
+                    }
+                    
+                    HStack {
+                        Text("State")
+                            .font(.caption2)
+                        Spacer()
+                        Text(engine.state.rawValue)
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    }
+                }
+                .padding(8)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
             }
-            .padding(10)
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .padding(.horizontal, 8)
+            .padding(.bottom, 10)
         }
-        .padding()
     }
 
     private var backgroundStyle: AnyShapeStyle {
