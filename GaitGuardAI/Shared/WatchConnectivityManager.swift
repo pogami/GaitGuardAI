@@ -34,7 +34,8 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
     // MARK: - Watch → iPhone (send from watch)
     
     func sendAssistEvent(type: String) {
-        guard let session = session, session.isPaired else { return }
+        guard let session = session else { return }
+        guard session.activationState == .activated else { return }
         
         let event = AssistEvent(timestamp: Date(), type: type)
         guard let data = try? JSONEncoder().encode(event) else { return }
