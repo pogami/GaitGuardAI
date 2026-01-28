@@ -107,6 +107,13 @@ struct ContentView: View {
                         .font(.caption.bold())
                         .foregroundStyle(.secondary)
                 }
+            } else {
+                Button {
+                    connectivity.requestCurrentStateFromWatch()
+                } label: {
+                    Label("Refresh from Watch", systemImage: "arrow.clockwise")
+                }
+                .buttonStyle(.bordered)
             }
         }
         .padding()
@@ -119,11 +126,12 @@ struct ContentView: View {
                 .font(.subheadline.bold())
                 .foregroundStyle(.secondary)
 
-            HStack(spacing: 12) {
+            VStack(spacing: 10) {
                 Button {
                     connectivity.addDemoEvents()
                 } label: {
                     Label("Add Sample Data", systemImage: "wand.and.stars")
+                        .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
 
@@ -136,6 +144,7 @@ struct ContentView: View {
                 } label: {
                     Label(connectivity.isLiveDemoRunning ? "Stop Live Demo" : "Start Live Demo",
                           systemImage: connectivity.isLiveDemoRunning ? "stop.fill" : "play.fill")
+                        .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
             }

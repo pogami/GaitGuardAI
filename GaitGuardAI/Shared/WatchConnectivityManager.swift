@@ -14,6 +14,10 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
     
     @Published var assistEvents: [AssistEvent] = []
     @Published var remoteState: String = "off"
+#if os(watchOS)
+    /// Latest known state on the watch (used to answer iPhone "refresh" requests).
+    @Published private(set) var localState: String = "off"
+#endif
     
     private let session: WCSession?
     private let eventsKey = "gaitguard.assistEvents"
@@ -54,6 +58,9 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
 
     func sendStateUpdate(_ state: String) {
         guard let session = session else { return }
+#if os(watchOS)
+        localState = state
+#endif
         guard session.activationState == .activated else {
             // Session not yet ready — buffer the latest state and flush on activation.
             pendingGuardState = state
@@ -75,6 +82,22 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         pendingGuardState = nil
         sendStateUpdate(state)
     }
+
+#if os(iOS)
+    /// Ask the watch for its current guard state (useful if the iPhone launched after the watch started).
+    func requestCurrentStateFromWatch() {
+        guard let session = session else { return }
+        guard session.activationState == .activated else { return }
+        guard session.isReachable else { return }
+
+        session.sendMessage(["requestState": true], replyHandler: { [weak self] reply in
+            guard let self else { return }
+            if let state = reply["guardState"] as? String {
+                DispatchQueue.main.async { self.remoteState = state }
+            }
+        }, errorHandler: nil)
+    }
+#endif
     
     // MARK: - iPhone (receive + store)
     
@@ -203,6 +226,13 @@ extension WatchConnectivityManager: WCSessionDelegate {
 
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         // Some flows call this variant; forward to the same handler and ack.
+        // iPhone can explicitly ask the watch for the latest state.
+#if os(watchOS)
+        if (message["requestState"] as? Bool) == true {
+            replyHandler(["guardState": self.localState])
+            return
+        }
+#endif
         self.session(session, didReceiveMessage: message)
         replyHandler([:])
     }
