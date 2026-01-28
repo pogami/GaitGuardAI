@@ -17,6 +17,7 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
     
     private let session: WCSession?
     private let eventsKey = "gaitguard.assistEvents"
+    private var pendingGuardState: String?
     
     override init() {
         if WCSession.isSupported() {
@@ -50,13 +51,26 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
 
     func sendStateUpdate(_ state: String) {
         guard let session = session else { return }
-        guard session.activationState == .activated else { return }
+        guard session.activationState == .activated else {
+            // Session not yet ready — buffer the latest state and flush on activation.
+            pendingGuardState = state
+            return
+        }
         
+        // Best-effort: send immediately if reachable.
         if session.isReachable {
             session.sendMessage(["guardState": state], replyHandler: nil)
-        } else {
-            try? session.updateApplicationContext(["guardState": state])
         }
+        // Reliable fallback: update application context (delivered even if the other app is backgrounded).
+        try? session.updateApplicationContext(["guardState": state])
+    }
+
+    private func flushPendingStateIfNeeded() {
+        guard let session = session else { return }
+        guard session.activationState == .activated else { return }
+        guard let state = pendingGuardState else { return }
+        pendingGuardState = nil
+        sendStateUpdate(state)
     }
     
     // MARK: - iPhone (receive + store)
@@ -94,7 +108,9 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
 
 extension WatchConnectivityManager: WCSessionDelegate {
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        // Session activated
+        DispatchQueue.main.async {
+            self.flushPendingStateIfNeeded()
+        }
     }
 
 #if os(iOS)
@@ -116,6 +132,12 @@ extension WatchConnectivityManager: WCSessionDelegate {
                 self.remoteState = state
             }
         }
+    }
+
+    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
+        // Some flows call this variant; forward to the same handler and ack.
+        self.session(session, didReceiveMessage: message)
+        replyHandler([:])
     }
     
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {

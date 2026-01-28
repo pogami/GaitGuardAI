@@ -29,7 +29,7 @@ final class MotionDetector: ObservableObject {
 
     @Published private(set) var state: GuardState = .off {
         didSet {
-            // Sync state to iPhone whenever it changes
+            // Sync state to iPhone whenever it changes.
             WatchConnectivityManager.shared.sendStateUpdate(state.rawValue)
         }
     }
@@ -79,6 +79,8 @@ final class MotionDetector: ObservableObject {
         motionManager.deviceMotionUpdateInterval = 1.0 / 50.0
         isMonitoring = true
         state = .monitoringStill
+        // Ensure iPhone sees "live" immediately even if the state setter fired before WCSession activated.
+        WatchConnectivityManager.shared.sendStateUpdate(state.rawValue)
 
         motionManager.startDeviceMotionUpdates(using: .xArbitraryZVertical, to: .main) { [weak self] motion, _ in
             guard let self, let motion else { return }
@@ -89,6 +91,7 @@ final class MotionDetector: ObservableObject {
     func stopMonitoring() {
         isMonitoring = false
         state = .off
+        WatchConnectivityManager.shared.sendStateUpdate(state.rawValue)
         lastAttemptStart = nil
         lastTurnStart = nil
         lastSamples.removeAll(keepingCapacity: false)
