@@ -403,7 +403,7 @@
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We record your activity to help track your walking progress.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "GaitGuard uses motion sensors to detect freezing episodes and help you walk.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKWatchOnly = YES;
+				INFOPLIST_KEY_WKWatchOnly = NO;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -441,7 +441,7 @@
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We record your activity to help track your walking progress.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "GaitGuard uses motion sensors to detect freezing episodes and help you walk.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKWatchOnly = YES;
+				INFOPLIST_KEY_WKWatchOnly = NO;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
